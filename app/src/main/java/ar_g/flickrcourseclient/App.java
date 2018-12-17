@@ -5,6 +5,7 @@ import android.content.Context;
 
 import ar_g.flickrcourseclient.feed.FlickrApi;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class App extends Application {
@@ -16,6 +17,7 @@ public class App extends Application {
       Retrofit retrofit = new Retrofit.Builder()
         .baseUrl("https://api.flickr.com/")
         .addConverterFactory(GsonConverterFactory.create())
+        .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
         .build();
 
       flickrApi = retrofit.create(FlickrApi.class);
