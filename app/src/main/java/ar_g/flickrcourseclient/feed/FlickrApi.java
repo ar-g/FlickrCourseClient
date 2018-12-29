@@ -9,10 +9,19 @@ public interface FlickrApi {
   String API_KEY = "90b99338fcc5e746fb61693061bb9b10";
 
   @GET("services/rest/")
-  Observable<Result> listRepos(
+  Observable<Result> recentPhotos(
     @Query("method") String method,
     @Query("api_key") String apiKey,
     @Query("format") String format,
     @Query("nojsoncallback") int noJsonCallback
+  );
+
+  @GET("services/rest/")
+  Observable<Result> searchPhotos(
+    @Query("method") String method,
+    @Query("api_key") String apiKey,
+    @Query("format") String format,
+    @Query("nojsoncallback") int noJsonCallback,
+    @Query("text") String text
   );
 }
