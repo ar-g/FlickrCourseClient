@@ -3,6 +3,8 @@ package ar_g.flickrcourseclient.feed;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import javax.inject.Inject;
+
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import ar_g.flickrcourseclient.model.PhotoItem;

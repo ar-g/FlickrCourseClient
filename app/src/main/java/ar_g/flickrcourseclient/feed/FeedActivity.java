@@ -1,7 +1,16 @@
 package ar_g.flickrcourseclient.feed;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.widget.EditText;
+import android.widget.Toast;
+
 import com.google.android.material.snackbar.Snackbar;
+
+import java.util.List;
+
+import javax.inject.Inject;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,31 +19,23 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.widget.EditText;
-import android.widget.Toast;
-
-import java.util.List;
-
 import ar_g.flickrcourseclient.App;
 import ar_g.flickrcourseclient.R;
 import ar_g.flickrcourseclient.model.PhotoItem;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.schedulers.Schedulers;
-
-import static ar_g.flickrcourseclient.feed.FlickrApi.API_KEY;
 
 public class FeedActivity extends AppCompatActivity {
   private CompositeDisposable compositeDisposable = new CompositeDisposable();
   private RecyclerView recyclerView;
   private EditText etSearch;
+  @Inject FeedUseCase feedUseCase;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
+
+    App.getApp(this).getAppComponent().inject(this);
 
     recyclerView = findViewById(R.id.rv);
     etSearch = findViewById(R.id.etSearch);
@@ -45,14 +46,7 @@ public class FeedActivity extends AppCompatActivity {
 
     FeedViewModel feedViewModel = ViewModelProviders.of(this, new ViewModelProvider.Factory() {
       @NonNull @Override public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-        return (T)
-          new FeedViewModel(
-            new FeedUseCase(
-              new FeedRepository(
-                App.getApp(FeedActivity.this).getFlickrApi()
-              )
-            )
-          );
+        return (T) new FeedViewModel(feedUseCase);
       }
     }).get(FeedViewModel.class);
 
@@ -86,13 +80,6 @@ public class FeedActivity extends AppCompatActivity {
   private void showSnackBar(Throwable throwable) {
     Snackbar.make(etSearch, throwable.getLocalizedMessage(), Snackbar.LENGTH_INDEFINITE)
       .setAction("Повторить запрос", v -> {
-        FlickrApi flickrApi = App.getApp(this).getFlickrApi();
-
-        flickrApi.searchPhotos("flickr.photos.search", API_KEY, "json", 1, etSearch.getText().toString())
-          .subscribeOn(Schedulers.io())
-          .observeOn(AndroidSchedulers.mainThread())
-          .map(result -> result.getPhotos().getPhoto())
-          .subscribe(photos -> populateAdapter(photos), t -> showSnackBar(t));
 
         //todo переподписаться на изменения текста
       })

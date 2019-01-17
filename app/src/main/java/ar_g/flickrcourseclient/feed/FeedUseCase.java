@@ -2,21 +2,22 @@ package ar_g.flickrcourseclient.feed;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import ar_g.flickrcourseclient.model.PhotoItem;
 import io.reactivex.Observable;
 
-import static ar_g.flickrcourseclient.feed.FlickrApi.API_KEY;
-
 public class FeedUseCase {
-  private final FeedRepository feedRepository;
+  private final IFeedRepository IFeedRepository;
 
-  public FeedUseCase(FeedRepository feedRepository) {this.feedRepository = feedRepository;}
+  @Inject
+  public FeedUseCase(IFeedRepository IFeedRepository) {this.IFeedRepository = IFeedRepository;}
 
   public Observable<List<PhotoItem>> recentPhotos(){
-    return feedRepository.recentPhotos();
+    return IFeedRepository.recentPhotos();
   }
 
   public Observable<List<PhotoItem>> searchPhotos(String query){
-    return feedRepository.searchPhotos(query);
+    return IFeedRepository.searchPhotos(query);
   }
 }
