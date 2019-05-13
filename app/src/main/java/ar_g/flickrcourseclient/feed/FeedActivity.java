@@ -50,7 +50,6 @@ public class FeedActivity extends AppCompatActivity {
       }
     }).get(FeedViewModel.class);
 
-    feedViewModel.loadRecentPhotos();
     feedViewModel.getPhotosLiveData().observe(this, photoItems -> {
       populateAdapter(photoItems);
     });
@@ -75,19 +74,6 @@ public class FeedActivity extends AppCompatActivity {
   private void populateAdapter(List<PhotoItem> photos) {
     FeedAdapter adapter = new FeedAdapter(photos);
     recyclerView.setAdapter(adapter);
-  }
-
-  private void showSnackBar(Throwable throwable) {
-    Snackbar.make(etSearch, throwable.getLocalizedMessage(), Snackbar.LENGTH_INDEFINITE)
-      .setAction("Повторить запрос", v -> {
-
-        //todo переподписаться на изменения текста
-      })
-      .show();
-  }
-
-  private void showErrorMsg(Throwable throwable) {
-    Toast.makeText(FeedActivity.this, throwable.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
   }
 
   @Override protected void onDestroy() {

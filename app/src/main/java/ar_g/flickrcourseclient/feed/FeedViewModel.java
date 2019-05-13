@@ -16,21 +16,12 @@ import io.reactivex.subjects.PublishSubject;
 public class FeedViewModel extends ViewModel {
   private MutableLiveData<List<PhotoItem>> photosLiveData = new MutableLiveData<>();
   private PublishSubject<String> querySubject = PublishSubject.create();
+
   private CompositeDisposable compositeDisposable = new CompositeDisposable();
   private final FeedUseCase feedUseCase;
 
   public FeedViewModel(FeedUseCase feedUseCase) {
     this.feedUseCase = feedUseCase;
-  }
-
-  public void loadRecentPhotos(){
-    compositeDisposable.add(
-      feedUseCase.recentPhotos()
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(photoItems -> photosLiveData.setValue(photoItems))
-      //todo добавить обработку ошибок
-    );
   }
 
   public void bindToQuery(){
@@ -41,7 +32,7 @@ public class FeedViewModel extends ViewModel {
         .map(s -> s.trim())
         .filter(s -> s.length() > 3)
         .debounce(500, TimeUnit.MILLISECONDS)
-        .switchMap(s -> feedUseCase.searchPhotos(s))
+        .switchMap(query -> feedUseCase.searchPhotos(query))
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(photoItems -> photosLiveData.setValue(photoItems))
       //todo добавить обработку ошибок
